@@ -5,6 +5,8 @@ import { View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import SectionCard from './SectionCard'
 import { Text } from './ui/text'
+import useBudget from '@/hooks/useBudget'
+import { TriangleAlert } from 'lucide-react-native'
 
 interface BudgetCardProps {
   budget?: BudgetResponse
@@ -25,6 +27,11 @@ export default function BudgetCard({
     (acc, presupuestoCategoria) => acc + (presupuestoCategoria.gastado ?? 0),
     0,
   )
+  const { currentBudget } = useBudget(budget.usuarioId ? budget.usuarioId : '')
+  const budgetInDanger =
+    currentBudget?.projection?.expenseOverBudget &&
+    currentBudget.projection.expenseOverBudget > 100
+
   const montoRestante = (
     (montoPresupuestado ?? 0) - (montoTotalGastado ?? 0)
   ).toLocaleString('es-AR')
@@ -63,9 +70,14 @@ export default function BudgetCard({
       }
     >
       <View>
-        <Text className="text-2xl font-semibold">
-          ${montoPresupuestado.toLocaleString('es-AR')}
-        </Text>
+        <View className="flex-row gap-2 items-center">
+          <Text className="text-2xl font-semibold">
+            ${montoPresupuestado.toLocaleString('es-AR')}
+          </Text>
+          {budgetInDanger && (
+            <TriangleAlert color="red" size={18} strokeWidth={2.5} />
+          )}
+        </View>
         <Text className="text-lg text-muted-foreground">
           {fechaInicio} - {fechaFin}
         </Text>
