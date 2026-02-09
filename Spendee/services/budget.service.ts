@@ -7,6 +7,15 @@ export interface BudgetCategoryResponse {
   porcentaje: number
 }
 
+export interface BudgetProjectionResponse {
+  actualExpense: number
+  daysPassed: number
+  totalDays: number
+  dailyAverageExpense: number
+  projectedTotalExpense: number
+  expenseOverBudget: number
+}
+
 export interface BudgetResponse {
   id: number
   usuarioId: string
@@ -14,6 +23,7 @@ export interface BudgetResponse {
   fechaInicio: Date
   fechaFin: Date
   PresupuestoCategoria: BudgetCategoryResponse[]
+  projection?: BudgetProjectionResponse
 }
 
 export interface BudgetGroupResponse {
@@ -40,6 +50,12 @@ class BudgetService {
   }
   public async findByBudgetId(budgetId: number) {
     return await ApiService.get<BudgetResponse>(`/budget/${budgetId}`)
+  }
+
+    public async getBudgetProjection(budgetId: number) {
+    return await ApiService.get<BudgetProjectionResponse>(
+      `/budget/${budgetId}/projection`,
+    )
   }
 }
 

@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
 import { useAuth } from '@/context/AuthContext'
 import { toastService } from '@/context/ToastContext'
+import useBudget from '@/hooks/useBudget'
 import useBudgets from '@/hooks/useBudget'
 import useBudgetDetail from '@/hooks/useBudgetDetail'
 import useCategories from '@/hooks/useCategories'
@@ -23,6 +24,7 @@ const Budget = () => {
   const { budgetDetailData, isRefetching, isFetching } = useBudgetDetail(
     Number(id),
   )
+  const { currentBudget } = useBudget(user ? user.uid : '')
   const { deleteBudget, refetch } = useBudgets(user ? user.uid : '')
   const { categoriesData } = useCategories()
 
@@ -250,6 +252,23 @@ const Budget = () => {
             )
           },
         )}
+        <SectionCard>
+          <Text className="text-muted-foreground">
+            Si seguis gastando al ritmo actual, vas a gastar{' '}
+            <Text className="font-semibold">
+              ${currentBudget?.projection?.projectedTotalExpense.toLocaleString('es-AR')}
+            </Text>{' '}
+            para el fin del periodo.
+          </Text>
+          <Text className="text-muted-foreground">
+            Cerraras el periodo gastando un{' '}
+            <Text className="font-semibold">
+              {currentBudget?.projection?.expenseOverBudget.toLocaleString('es-AR')}%
+            </Text>{' '}
+            del presupuesto.
+          </Text>
+
+        </SectionCard>
       </Section>
     </Container>
   )
