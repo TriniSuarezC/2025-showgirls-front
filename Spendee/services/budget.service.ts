@@ -26,11 +26,21 @@ export interface BudgetResponse {
   projection?: BudgetProjectionResponse
 }
 
+export interface BudgetHistoricalStats {
+  budgetId: number
+  totalSpent: number
+  totalDays: number
+  avgDailySpent: number
+}
+
 export interface BudgetGroupResponse {
   futureBudgets: BudgetResponse[]
   currentBudget: BudgetResponse
   pastBudgets: BudgetResponse[]
   allBudgetDates: Date[]
+  stats: {
+    historical: BudgetHistoricalStats[]
+  }
 }
 
 class BudgetService {
@@ -52,7 +62,7 @@ class BudgetService {
     return await ApiService.get<BudgetResponse>(`/budget/${budgetId}`)
   }
 
-    public async getBudgetProjection(budgetId: number) {
+  public async getBudgetProjection(budgetId: number) {
     return await ApiService.get<BudgetProjectionResponse>(
       `/budget/${budgetId}/projection`,
     )
