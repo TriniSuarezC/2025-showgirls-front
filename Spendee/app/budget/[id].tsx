@@ -13,7 +13,14 @@ import useBudgetDetail from '@/hooks/useBudgetDetail'
 import useCategories from '@/hooks/useCategories'
 import { getIcon } from '@/lib/getIcon'
 import { router, useGlobalSearchParams, useNavigation } from 'expo-router'
-import { History, Pencil, Plus, Trash2 } from 'lucide-react-native'
+import {
+  History,
+  Pencil,
+  Plus,
+  Smile,
+  Trash2,
+  TriangleAlert,
+} from 'lucide-react-native'
 import { useColorScheme } from 'nativewind'
 import React, { useLayoutEffect } from 'react'
 import { Alert, View } from 'react-native'
@@ -25,9 +32,11 @@ const Budget = () => {
     Number(id),
   )
   const { currentBudget, historicalStats } = useBudget(user ? user.uid : '')
-  console.log('historicalStats', historicalStats)
   const { deleteBudget, refetch } = useBudgets(user ? user.uid : '')
   const { categoriesData } = useCategories()
+  const budgetInDanger =
+    currentBudget?.projection?.expenseOverBudget &&
+    currentBudget.projection.expenseOverBudget > 100
 
   const isCurrentBudget =
     new Date() >= new Date(budgetDetailData?.fechaInicio!) &&
@@ -174,6 +183,19 @@ const Budget = () => {
           <Text className="text-muted-foreground">
             {fechaInicio} - {fechaFin}
           </Text>
+          {budgetInDanger ? (
+            <View className="flex-row gap-2 items-center mt-1">
+              <TriangleAlert color="red" size={18} strokeWidth={2.5} />
+              <Text className="text-red-500">Exceso de gasto detectado</Text>
+            </View>
+          ) : (
+            <View className="flex-row gap-2 items-center mt-1">
+              <Smile color="green" size={18} strokeWidth={2.5} />
+              <Text className="text-green-500">
+                Gasto acorde al presupuesto
+              </Text>
+            </View>
+          )}
         </SectionCard>
       </Section>
       <Section>
@@ -253,28 +275,30 @@ const Budget = () => {
             )
           },
         )}
-        <SectionCard>
-          <Text className="text-muted-foreground">
-            Si seguis gastando al ritmo actual, vas a gastar{' '}
-            <Text className="font-semibold">
+        <View className="flex-row gap-4 px-1">
+          <SectionCard className="flex-1 m-0 p-4 ">
+            <Text className="text-muted-foreground text-xs mb-1">
+              Proyección al cierre
+            </Text>
+            <Text className="text-lg font-bold">
               $
               {currentBudget?.projection?.projectedTotalExpense.toLocaleString(
                 'es-AR',
               )}
-            </Text>{' '}
-            para el fin del periodo.
-          </Text>
-          <Text className="text-muted-foreground">
-            Cerraras el periodo gastando un{' '}
-            <Text className="font-semibold">
-              {currentBudget?.projection?.expenseOverBudget.toLocaleString(
-                'es-AR',
-              )}
-              %
-            </Text>{' '}
-            del presupuesto.
-          </Text>
-        </SectionCard>
+            </Text>
+          </SectionCard>
+
+          <SectionCard className="flex-1 m-0 p-4 ">
+            <Text className="text-muted-foreground text-xs mb-1">
+              Vs. Presupuesto
+            </Text>
+            <Text
+              className={`text-lg font-bold ${currentBudget?.projection?.expenseOverBudget || 0 > 100 ? 'text-red-500' : ''}`}
+            >
+              {currentBudget?.projection?.expenseOverBudget}%
+            </Text>
+          </SectionCard>
+        </View>
       </Section>
     </Container>
   )
