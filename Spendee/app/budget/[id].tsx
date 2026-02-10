@@ -198,14 +198,6 @@ const Budget = () => {
           <Text className="text-muted-foreground">
             {fechaInicio} - {fechaFin}
           </Text>
-          <Text className="text-transparent">
-            {budgetInDanger && isCurrentBudget && (
-              <View className="flex-row gap-2 items-center mt-1">
-                <TriangleAlert color="red" size={18} strokeWidth={2.5} />
-                <Text className="text-red-500">Exceso de gasto detectado</Text>
-              </View>
-            )}
-          </Text>
         </SectionCard>
       </Section>
       <Section>
@@ -288,6 +280,18 @@ const Budget = () => {
 
         {isCurrentBudget && (
           <>
+            <View className="flex flex-row gap-2 items-center justify-center">
+              <Text className="text-transparent">
+                {budgetInDanger && isCurrentBudget && (
+                  <View className="flex-row gap-2 items-center mt-1">
+                    <TriangleAlert color="red" size={18} strokeWidth={2.5} />
+                    <Text className="text-red-500">
+                      Exceso de gasto detectado
+                    </Text>
+                  </View>
+                )}
+              </Text>
+            </View>
             <View className="flex-row gap-4 px-1 mt-2">
               <ProjectionCard
                 title="PROYECCION AL CIERRE"
@@ -330,6 +334,7 @@ const Budget = () => {
                 hoverText="Comparación entre el ritmo de gasto actual (gasto diario promedio proyectado) y el ritmo de gasto histórico (promedio diario gastado en presupuestos anteriores). Un valor superior al 100% indica que el ritmo de gasto actual es más alto que el histórico."
               ></ProjectionCard>
             </View>
+
             <View className="flex flex-row gap-2 items-center justify-center">
               <Info size={16} color={'gray'} />
               <Text className="text-muted-foreground">

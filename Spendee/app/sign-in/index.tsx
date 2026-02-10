@@ -142,14 +142,14 @@ export default function SignInForm() {
                     </View>
                   )}
                 </View>
-                <View className="mt-2 gap-4">
+                {/* <View className="mt-2 gap-4">
                   <View className="flex-row items-center justify-center gap-3">
                     <Separator className="flex-1" />
                     <Text className="text-muted-foreground text-sm">o</Text>
                     <Separator className="flex-1" />
                   </View>
                   <SocialConnections />
-                </View>
+                </View> */}
               </CardContent>
             </Card>
           </View>
