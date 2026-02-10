@@ -1,18 +1,28 @@
 import Container from '@/components/Container'
 import Dropdown from '@/components/Dropdown'
 import IconButton from '@/components/IconButton'
+import ProjectionCard from '@/components/ProjectionCard'
 import Section from '@/components/Section'
 import SectionCard from '@/components/SectionCard'
 import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
 import { useAuth } from '@/context/AuthContext'
 import { toastService } from '@/context/ToastContext'
+import useBudget from '@/hooks/useBudget'
 import useBudgets from '@/hooks/useBudget'
 import useBudgetDetail from '@/hooks/useBudgetDetail'
 import useCategories from '@/hooks/useCategories'
 import { getIcon } from '@/lib/getIcon'
 import { router, useGlobalSearchParams, useNavigation } from 'expo-router'
-import { History, Pencil, Plus, Trash2 } from 'lucide-react-native'
+import {
+  History,
+  Info,
+  Pencil,
+  Plus,
+  Smile,
+  Trash2,
+  TriangleAlert,
+} from 'lucide-react-native'
 import { useColorScheme } from 'nativewind'
 import React, { useLayoutEffect } from 'react'
 import { Alert, View } from 'react-native'
@@ -23,8 +33,11 @@ const Budget = () => {
   const { budgetDetailData, isRefetching, isFetching } = useBudgetDetail(
     Number(id),
   )
+  const { currentBudget, historicalStats } = useBudget(user ? user.uid : '')
   const { deleteBudget, refetch } = useBudgets(user ? user.uid : '')
   const { categoriesData } = useCategories()
+  const budgetInDanger =
+    (currentBudget?.projection?.expenseOverBudget ?? 0) > 100
 
   const isCurrentBudget =
     new Date() >= new Date(budgetDetailData?.fechaInicio!) &&
@@ -158,6 +171,19 @@ const Budget = () => {
     )
   }
 
+  const historicalAvgDaily =
+    historicalStats?.historical.reduce(
+      (acc, h) => h.avgDailySpend || 0 + acc,
+      0,
+    ) ||
+    0 / (historicalStats?.historical.length || 1) ||
+    0
+
+  const porcentajeVsHistorico =
+    ((currentBudget?.projection?.dailyAverageExpense || 0) /
+      (historicalAvgDaily || 1)) *
+    100
+
   return (
     <Container activity={isRefetching || isFetching}>
       <Section>
@@ -213,7 +239,7 @@ const Budget = () => {
                   <View className="flex-row items-center gap-2 flex-1">
                     <IconButton
                       size="md"
-                      text=""
+                      // text=""
                       icon={getIcon(categoria?.icono || 'ellipsis')}
                       iconColor={categoria?.color}
                     />
@@ -249,6 +275,77 @@ const Budget = () => {
               </SectionCard>
             )
           },
+        )}
+
+        {isCurrentBudget && (
+          <>
+            <View className="mt-6 mb-2 items-center">
+              <Text className="text-muted-foreground text-xs font-medium uppercase tracking-widest">
+                Análisis del Periodo Actual
+              </Text>
+            </View>
+            {budgetInDanger && isCurrentBudget && (
+              <View className="flex-row gap-3 items-center justify-center bg-red-50/80 py-3 px-4 rounded-2xl mb-4 border border-red-100">
+                <View className="shrink-0">
+                  <TriangleAlert color="#ef4444" size={20} strokeWidth={2.5} />
+                </View>
+                <Text
+                  className="text-red-600 font-semibold text-sm flex-1"
+                  style={{ lineHeight: 20 }}
+                >
+                  ¡Cuidado! A este ritmo te vas a pasar del presupuesto
+                  establecido.
+                </Text>
+              </View>
+            )}
+
+            <View className="flex-row gap-4 px-1 mt-2">
+              <ProjectionCard
+                title="Gasto Final Estimado"
+                variant={budgetInDanger ? 'danger' : 'default'}
+                value={Math.round(
+                  currentBudget?.projection?.projectedTotalExpense || 0,
+                ).toLocaleString('es-AR')}
+                hoverText="Es el total que habrás gastado al terminar el mes si seguís con el mismo ritmo de hoy."
+              />
+
+              <ProjectionCard
+                title="Uso del Presupuesto Estimado"
+                variant={budgetInDanger ? 'danger' : 'default'}
+                value={`${Math.round(currentBudget?.projection?.expenseOverBudget || 0)}%`}
+                hoverText="Representa cuánto del dinero disponible vas a consumir. Más de 100% significa que vas a necesitar más plata de la planeada."
+              />
+            </View>
+
+            <View className="mt-6 mb-2 items-center">
+              <Text className="text-muted-foreground text-xs font-medium uppercase tracking-widest">
+                Análisis Comparativo (Últimos 3 periodos)
+              </Text>
+            </View>
+
+            <View className="flex-row gap-4 px-1">
+              <ProjectionCard
+                title="Tu Promedio Diario"
+                value={historicalAvgDaily.toLocaleString('es-AR', {
+                  maximumFractionDigits: 0,
+                })}
+                hoverText="Esto es lo que solés gastar por día habitualmente. Sirve para saber si hoy estás 'gastador' o ahorrativo."
+              />
+
+              <ProjectionCard
+                title="Ritmo de Gasto"
+                value={`${porcentajeVsHistorico.toFixed(0)}%`}
+                hoverText="Compara tu gasto de hoy contra tu historia. Si es mayor a 100%, estás gastando más rápido que en meses anteriores."
+              />
+            </View>
+
+            <View className="flex flex-row gap-2 items-center justify-center mt-4 opacity-70">
+              <Info size={14} color={'gray'} />
+              <Text className="text-muted-foreground text-xs italic">
+                Toca las tarjetas para ver el detalle
+              </Text>
+            </View>
+          </>
         )}
       </Section>
     </Container>
