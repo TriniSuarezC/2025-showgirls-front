@@ -198,12 +198,14 @@ const Budget = () => {
           <Text className="text-muted-foreground">
             {fechaInicio} - {fechaFin}
           </Text>
-          {budgetInDanger && isCurrentBudget && (
-            <View className="flex-row gap-2 items-center mt-1">
-              <TriangleAlert color="red" size={18} strokeWidth={2.5} />
-              <Text className="text-red-500">Exceso de gasto detectado</Text>
-            </View>
-          )}
+          <Text className="text-transparent">
+            {budgetInDanger && isCurrentBudget && (
+              <View className="flex-row gap-2 items-center mt-1">
+                <TriangleAlert color="red" size={18} strokeWidth={2.5} />
+                <Text className="text-red-500">Exceso de gasto detectado</Text>
+              </View>
+            )}
+          </Text>
         </SectionCard>
       </Section>
       <Section>

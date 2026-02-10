@@ -78,9 +78,11 @@ export default function BudgetCard({
           <Text className="text-2xl font-semibold">
             ${montoPresupuestado.toLocaleString('es-AR')}
           </Text>
-          {budgetInDanger && isCurrentBudget && (
-            <TriangleAlert color="red" size={18} strokeWidth={2.5} />
-          )}
+          <Text className="text-transparent">
+            {budgetInDanger && isCurrentBudget && (
+              <TriangleAlert color="red" size={18} strokeWidth={2.5} />
+            )}
+          </Text>
         </View>
         <Text className="text-lg text-muted-foreground">
           {fechaInicio} - {fechaFin}
