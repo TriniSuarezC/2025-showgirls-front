@@ -4,11 +4,6 @@ import IconButton from '@/components/IconButton'
 import ProjectionCard from '@/components/ProjectionCard'
 import Section from '@/components/Section'
 import SectionCard from '@/components/SectionCard'
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card'
 import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
 import { useAuth } from '@/context/AuthContext'
@@ -178,13 +173,12 @@ const Budget = () => {
 
   const historicalAvgDaily =
     historicalStats?.historical.reduce(
-      (acc, h) => h.avgDailySpent || 0 + acc,
+      (acc, h) => h.avgDailySpend || 0 + acc,
       0,
     ) ||
     0 / (historicalStats?.historical.length || 1) ||
     0
-  {
-  }
+
   const porcentajeVsHistorico =
     ((currentBudget?.projection?.dailyAverageExpense || 0) /
       (historicalAvgDaily || 1)) *
@@ -194,6 +188,7 @@ const Budget = () => {
   }
   const historicoColorClass =
     porcentajeVsHistorico > 100 ? 'text-orange-500' : 'text-blue-500'
+
   return (
     <Container activity={isRefetching || isFetching}>
       <Section>
@@ -255,7 +250,7 @@ const Budget = () => {
                   <View className="flex-row items-center gap-2 flex-1">
                     <IconButton
                       size="md"
-                      text=""
+                      // text=""
                       icon={getIcon(categoria?.icono || 'ellipsis')}
                       iconColor={categoria?.color}
                     />
@@ -299,9 +294,9 @@ const Budget = () => {
               <ProjectionCard
                 title="PROYECCION AL CIERRE"
                 value={
-                  currentBudget?.projection?.projectedTotalExpense.toLocaleString(
-                    'es-AR',
-                  ) || '$0'
+                  Math.round(
+                    currentBudget?.projection?.projectedTotalExpense || 0,
+                  ).toLocaleString('es-AR') || '$0'
                 }
                 hoverText="Lo que se proyecta gastar al finalizar el período
                         presupuestario si se mantiene el ritmo de gasto actual.
@@ -312,7 +307,8 @@ const Budget = () => {
               <ProjectionCard
                 title="VS. PRESUPUESTO"
                 value={
-                  `${currentBudget?.projection?.expenseOverBudget}%` || '0%'
+                  `${Math.round(currentBudget?.projection?.expenseOverBudget || 0)}%` ||
+                  '0%'
                 }
                 hoverText="Porcentaje del presupuesto que se tendrá si se mantiene
                         el ritmo de gasto actual. Un valor superior al 100%

@@ -30,7 +30,7 @@ export interface BudgetHistoricalStats {
   budgetId: number
   totalSpent: number
   totalDays: number
-  avgDailySpent: number
+  avgDailySpend: number
 }
 
 export interface BudgetGroupResponse {
