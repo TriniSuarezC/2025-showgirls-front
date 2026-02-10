@@ -280,67 +280,71 @@ const Budget = () => {
 
         {isCurrentBudget && (
           <>
-            <View className="flex flex-row gap-2 items-center justify-center">
-              <Text className="text-transparent">
-                {budgetInDanger && isCurrentBudget && (
-                  <View className="flex-row gap-2 items-center mt-1">
-                    <TriangleAlert color="red" size={18} strokeWidth={2.5} />
-                    <Text className="text-red-500">
-                      Exceso de gasto detectado
-                    </Text>
-                  </View>
-                )}
+            <View className="mt-6 mb-2 items-center">
+              <Text className="text-muted-foreground text-xs font-medium uppercase tracking-widest">
+                Análisis del Periodo Actual
               </Text>
             </View>
+            {budgetInDanger && isCurrentBudget && (
+              <View className="flex-row gap-3 items-center justify-center bg-red-50/80 py-3 px-4 rounded-2xl mb-4 border border-red-100">
+                <View className="shrink-0">
+                  <TriangleAlert color="#ef4444" size={20} strokeWidth={2.5} />
+                </View>
+                <Text
+                  className="text-red-600 font-semibold text-sm flex-1"
+                  style={{ lineHeight: 20 }}
+                >
+                  ¡Cuidado! A este ritmo te vas a pasar del presupuesto
+                  establecido.
+                </Text>
+              </View>
+            )}
+
             <View className="flex-row gap-4 px-1 mt-2">
               <ProjectionCard
-                title="PROYECCION AL CIERRE"
+                title="Gasto Final Estimado"
                 variant={budgetInDanger ? 'danger' : 'default'}
-                value={
-                  Math.round(
-                    currentBudget?.projection?.projectedTotalExpense || 0,
-                  ).toLocaleString('es-AR') || '$0'
-                }
-                hoverText="Lo que se proyecta gastar al finalizar el período
-                        presupuestario si se mantiene el ritmo de gasto actual.
-                        Un valor superior al monto presupuestado indica que se
-                        proyecta gastar más del presupuesto establecido."
-              ></ProjectionCard>
+                value={Math.round(
+                  currentBudget?.projection?.projectedTotalExpense || 0,
+                ).toLocaleString('es-AR')}
+                hoverText="Es el total que habrás gastado al terminar el mes si seguís con el mismo ritmo de hoy."
+              />
 
               <ProjectionCard
-                title="VS. PRESUPUESTO"
+                title="Uso del Presupuesto Estimado"
                 variant={budgetInDanger ? 'danger' : 'default'}
-                value={
-                  `${Math.round(currentBudget?.projection?.expenseOverBudget || 0)}%` ||
-                  '0%'
-                }
-                hoverText="Porcentaje del presupuesto que se tendrá si se mantiene
-                        el ritmo de gasto actual. Un valor superior al 100%
-                        indica que se proyecta gastar más del presupuesto
-                        establecido."
-              ></ProjectionCard>
+                value={`${Math.round(currentBudget?.projection?.expenseOverBudget || 0)}%`}
+                hoverText="Representa cuánto del dinero disponible vas a consumir. Más de 100% significa que vas a necesitar más plata de la planeada."
+              />
             </View>
 
-            <View className="flex-row gap-4 px-1 mt-2">
+            <View className="mt-6 mb-2 items-center">
+              <Text className="text-muted-foreground text-xs font-medium uppercase tracking-widest">
+                Análisis Comparativo (Últimos 3 periodos)
+              </Text>
+            </View>
+
+            <View className="flex-row gap-4 px-1">
               <ProjectionCard
-                title="PROMEDIO DIARIO"
+                title="Tu Promedio Diario"
                 value={historicalAvgDaily.toLocaleString('es-AR', {
                   maximumFractionDigits: 0,
                 })}
-                hoverText="Promedio diario gastado en presupuestos anteriores. Sirve como referencia para comparar el ritmo de gasto actual."
-              ></ProjectionCard>
+                hoverText="Esto es lo que solés gastar por día habitualmente. Sirve para saber si hoy estás 'gastador' o ahorrativo."
+              />
 
               <ProjectionCard
-                title="RITMO DE GASTO"
+                title="Ritmo de Gasto"
                 value={`${porcentajeVsHistorico.toFixed(0)}%`}
-                hoverText="Comparación entre el ritmo de gasto actual (gasto diario promedio proyectado) y el ritmo de gasto histórico (promedio diario gastado en presupuestos anteriores). Un valor superior al 100% indica que el ritmo de gasto actual es más alto que el histórico."
-              ></ProjectionCard>
+                hoverText="Compara tu gasto de hoy contra tu historia. Si es mayor a 100%, estás gastando más rápido que en meses anteriores."
+              />
             </View>
 
-            <View className="flex flex-row gap-2 items-center justify-center">
-              <Info size={16} color={'gray'} />
-              <Text className="text-muted-foreground">
-                Presiona las tarjetas para mas informacion
+            {/* Footer de ayuda */}
+            <View className="flex flex-row gap-2 items-center justify-center mt-4 opacity-70">
+              <Info size={14} color={'gray'} />
+              <Text className="text-muted-foreground text-xs italic">
+                Toca las tarjetas para ver el detalle
               </Text>
             </View>
           </>
