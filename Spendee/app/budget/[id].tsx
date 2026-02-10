@@ -203,7 +203,7 @@ const Budget = () => {
           <Text className="text-muted-foreground">
             {fechaInicio} - {fechaFin}
           </Text>
-          {budgetInDanger && (
+          {budgetInDanger && isCurrentBudget && (
             <View className="flex-row gap-2 items-center mt-1">
               <TriangleAlert color="red" size={18} strokeWidth={2.5} />
               <Text className="text-red-500">Exceso de gasto detectado</Text>
@@ -288,61 +288,102 @@ const Budget = () => {
             )
           },
         )}
-        <View className="flex-row gap-4 px-1">
-          <SectionCard className="flex-1 m-0 p-4 ">
-            <Text className="text-muted-foreground text-xs mb-1">
-              Proyección al cierre
-            </Text>
-            <Text className="text-lg font-bold">
-              $
-              {currentBudget?.projection?.projectedTotalExpense.toLocaleString(
-                'es-AR',
-              )}
-            </Text>
-          </SectionCard>
 
-          <SectionCard className="flex-1 m-0 p-4 ">
-            <Text className="text-muted-foreground text-xs mb-1">
-              Vs. Presupuesto
-            </Text>
-            <Text
-              className={`text-lg font-bold ${currentBudget?.projection?.expenseOverBudget || 0 > 100 ? 'text-red-500' : ''}`}
-            >
-              {currentBudget?.projection?.expenseOverBudget}%
-            </Text>
-          </SectionCard>
-        </View>
-        {}
-        <View className="flex-row gap-4 px-1 mt-2">
-          <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0">
-            <View className="flex-row items-center gap-1 mb-1">
-              <History size={12} className="text-muted-foreground" />
-              <Text className="text-muted-foreground text-[10px] uppercase tracking-wider font-medium">
-                Promedio Diario
-              </Text>
-            </View>
-            <Text className="text-lg font-bold text-foreground">
-              $
-              {historicalAvgDaily.toLocaleString('es-AR', {
-                maximumFractionDigits: 0,
-              })}
-            </Text>
-          </SectionCard>
+        {isCurrentBudget && (
+          <>
+            <View className="flex-row gap-4 px-1 mt-2">
+              {/* Card: Proyección Final */}
+              <SectionCard
+                className={`flex-1 m-0 p-4 border-2 ${
+                  (currentBudget?.projection?.expenseOverBudget || 0) > 100
+                    ? 'border-red-500'
+                    : (currentBudget?.projection?.expenseOverBudget || 0) > 85
+                      ? 'border-orange-400'
+                      : 'border-green-500'
+                }`}
+              >
+                <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
+                  Proyección al cierre
+                </Text>
+                <Text
+                  className={`text-lg font-bold ${
+                    (currentBudget?.projection?.expenseOverBudget || 0) > 100
+                      ? 'text-red-500'
+                      : 'text-foreground'
+                  }`}
+                >
+                  ${' '}
+                  {currentBudget?.projection?.projectedTotalExpense.toLocaleString(
+                    'es-AR',
+                  )}
+                </Text>
+              </SectionCard>
 
-          <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0">
-            <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
-              Ritmo de Gasto
-            </Text>
-            <View className=" items-center gap-1">
-              <Text className={`text-lg font-bold ${historicoColorClass}`}>
-                {porcentajeVsHistorico.toFixed(0)}%
-              </Text>
-              <Text className="text-[10px] text-muted-foreground mb-1">
-                vs. histórico
-              </Text>
+              {/* Card: Vs. Presupuesto */}
+              <SectionCard
+                className={`flex-1 m-0 p-4 border-2 ${
+                  (currentBudget?.projection?.expenseOverBudget || 0) > 100
+                    ? 'border-red-500'
+                    : (currentBudget?.projection?.expenseOverBudget || 0) > 85
+                      ? 'border-orange-400'
+                      : 'border-green-500'
+                }`}
+              >
+                <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
+                  Vs. Presupuesto
+                </Text>
+                <View className="flex-row items-center gap-1">
+                  <Text
+                    className={`text-lg font-bold ${
+                      (currentBudget?.projection?.expenseOverBudget || 0) > 100
+                        ? 'text-red-500'
+                        : 'text-foreground'
+                    }`}
+                  >
+                    {currentBudget?.projection?.expenseOverBudget}%
+                  </Text>
+                  <Text className="text-xs">
+                    {(currentBudget?.projection?.expenseOverBudget || 0) > 100
+                      ? '🔺'
+                      : '✅'}
+                  </Text>
+                </View>
+              </SectionCard>
             </View>
-          </SectionCard>
-        </View>
+
+            {/* Estadísticas Históricas Secundarias */}
+            <View className="flex-row gap-4 px-1 mt-2">
+              <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0 shadow-none">
+                <View className="flex-row items-center gap-1 mb-1">
+                  <History size={12} color="gray" />
+                  <Text className="text-muted-foreground text-[10px] uppercase tracking-wider font-medium">
+                    Promedio Diario
+                  </Text>
+                </View>
+                <Text className="text-lg font-bold text-foreground">
+                  ${' '}
+                  {historicalAvgDaily.toLocaleString('es-AR', {
+                    maximumFractionDigits: 0,
+                  })}
+                </Text>
+              </SectionCard>
+
+              <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0 shadow-none">
+                <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
+                  Ritmo de Gasto
+                </Text>
+                <View className="flex-row items-baseline gap-1">
+                  <Text className={`text-lg font-bold ${historicoColorClass}`}>
+                    {porcentajeVsHistorico.toFixed(0)}%
+                  </Text>
+                  <Text className="text-[10px] text-muted-foreground">
+                    vs. hist.
+                  </Text>
+                </View>
+              </SectionCard>
+            </View>
+          </>
+        )}
       </Section>
     </Container>
   )

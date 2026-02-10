@@ -56,6 +56,10 @@ export default function BudgetCard({
   const porcentajePresupuesto =
     ((montoTotalGastado ?? 0) / (montoPresupuestado ?? 0)) * 100
 
+  const isCurrentBudget =
+    new Date() >= new Date(budget?.fechaInicio!) &&
+    new Date() <= new Date(budget?.fechaFin!)
+
   return (
     <SectionCard
       items="center"
@@ -74,7 +78,7 @@ export default function BudgetCard({
           <Text className="text-2xl font-semibold">
             ${montoPresupuestado.toLocaleString('es-AR')}
           </Text>
-          {budgetInDanger && (
+          {budgetInDanger && isCurrentBudget && (
             <TriangleAlert color="red" size={18} strokeWidth={2.5} />
           )}
         </View>
