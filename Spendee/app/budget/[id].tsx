@@ -16,6 +16,7 @@ import { getIcon } from '@/lib/getIcon'
 import { router, useGlobalSearchParams, useNavigation } from 'expo-router'
 import {
   History,
+  Info,
   Pencil,
   Plus,
   Smile,
@@ -184,11 +185,6 @@ const Budget = () => {
       (historicalAvgDaily || 1)) *
     100
 
-  {
-  }
-  const historicoColorClass =
-    porcentajeVsHistorico > 100 ? 'text-orange-500' : 'text-blue-500'
-
   return (
     <Container activity={isRefetching || isFetching}>
       <Section>
@@ -331,6 +327,12 @@ const Budget = () => {
                 value={`${porcentajeVsHistorico.toFixed(0)}%`}
                 hoverText="Comparación entre el ritmo de gasto actual (gasto diario promedio proyectado) y el ritmo de gasto histórico (promedio diario gastado en presupuestos anteriores). Un valor superior al 100% indica que el ritmo de gasto actual es más alto que el histórico."
               ></ProjectionCard>
+            </View>
+            <View className="flex flex-row gap-2 items-center justify-center">
+              <Info size={16} color={'gray'} />
+              <Text className="text-muted-foreground">
+                Presiona las tarjetas para mas informacion
+              </Text>
             </View>
           </>
         )}
