@@ -10,6 +10,17 @@ export default function useBudgets(usuarioId: string) {
   function onMutationSuccess() {
     queryClient.invalidateQueries({ queryKey: ['budgets', usuarioId] })
     queryClient.invalidateQueries({ queryKey: ['budgetDetail'], exact: false })
+    queryClient.invalidateQueries({ queryKey: ['expenses'], exact: false })
+    queryClient.invalidateQueries({
+      queryKey: ['expensesByCategory'],
+      exact: false,
+    })
+    queryClient.invalidateQueries({
+      queryKey: ['categoriesChart'],
+      exact: false,
+    })
+    queryClient.invalidateQueries({ queryKey: ['balance'], exact: false })
+    queryClient.invalidateQueries({ queryKey: ['streak'], exact: false })
   }
 
   const {
