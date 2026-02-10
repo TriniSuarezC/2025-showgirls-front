@@ -8,11 +8,20 @@ interface ProjectionCardProps {
   title: string
   value: string
   hoverText: string
+  variant?: 'default' | 'danger'
 }
 
-function ProjectionCard({ title, value, hoverText }: ProjectionCardProps) {
+function ProjectionCard({
+  title,
+  value,
+  hoverText,
+  variant = 'default',
+}: ProjectionCardProps) {
+  const borderStyles =
+    variant === 'danger' ? 'border-red-500 border-[1px]' : 'border-transparent'
+
   return (
-    <SectionCard className={'flex-1 m-0 p-4 border-2 '}>
+    <SectionCard className={`flex-1 m-0 p-4 ${borderStyles}`}>
       <HoverCard>
         <HoverCardTrigger>
           <Text className="text-muted-foreground text-[10px] text-center uppercase tracking-wider mb-1 font-medium">

@@ -295,6 +295,7 @@ const Budget = () => {
             <View className="flex-row gap-4 px-1 mt-2">
               <ProjectionCard
                 title="PROYECCION AL CIERRE"
+                variant={budgetInDanger ? 'danger' : 'default'}
                 value={
                   Math.round(
                     currentBudget?.projection?.projectedTotalExpense || 0,
@@ -308,6 +309,7 @@ const Budget = () => {
 
               <ProjectionCard
                 title="VS. PRESUPUESTO"
+                variant={budgetInDanger ? 'danger' : 'default'}
                 value={
                   `${Math.round(currentBudget?.projection?.expenseOverBudget || 0)}%` ||
                   '0%'
