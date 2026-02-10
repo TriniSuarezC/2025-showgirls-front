@@ -37,8 +37,7 @@ const Budget = () => {
   const { deleteBudget, refetch } = useBudgets(user ? user.uid : '')
   const { categoriesData } = useCategories()
   const budgetInDanger =
-    currentBudget?.projection?.expenseOverBudget &&
-    currentBudget.projection.expenseOverBudget > 100
+    (currentBudget?.projection?.expenseOverBudget ?? 0) > 100
 
   const isCurrentBudget =
     new Date() >= new Date(budgetDetailData?.fechaInicio!) &&
@@ -340,7 +339,6 @@ const Budget = () => {
               />
             </View>
 
-            {/* Footer de ayuda */}
             <View className="flex flex-row gap-2 items-center justify-center mt-4 opacity-70">
               <Info size={14} color={'gray'} />
               <Text className="text-muted-foreground text-xs italic">
