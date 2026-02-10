@@ -170,6 +170,26 @@ const Budget = () => {
     )
   }
 
+  const historicalAvgDaily =
+    historicalStats?.historical.reduce(
+      (acc, h) => h.avgDailySpent || 0 + acc,
+      0,
+    ) ||
+    0 / (historicalStats?.historical.length || 1) ||
+    0
+  {
+    /* Cálculo del porcentaje de comparación */
+  }
+  const porcentajeVsHistorico =
+    ((currentBudget?.projection?.dailyAverageExpense || 0) /
+      (historicalAvgDaily || 1)) *
+    100
+
+  {
+    /* Color basado en si estás gastando más o menos que tu promedio histórico */
+  }
+  const historicoColorClass =
+    porcentajeVsHistorico > 100 ? 'text-orange-500' : 'text-blue-500'
   return (
     <Container activity={isRefetching || isFetching}>
       <Section>
@@ -290,6 +310,37 @@ const Budget = () => {
             >
               {currentBudget?.projection?.expenseOverBudget}%
             </Text>
+          </SectionCard>
+        </View>
+        {}
+        <View className="flex-row gap-4 px-1 mt-2">
+          <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0">
+            <View className="flex-row items-center gap-1 mb-1">
+              <History size={12} className="text-muted-foreground" />
+              <Text className="text-muted-foreground text-[10px] uppercase tracking-wider font-medium">
+                Promedio Diario
+              </Text>
+            </View>
+            <Text className="text-lg font-bold text-foreground">
+              $
+              {historicalAvgDaily.toLocaleString('es-AR', {
+                maximumFractionDigits: 0,
+              })}
+            </Text>
+          </SectionCard>
+
+          <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0">
+            <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
+              Ritmo de Gasto
+            </Text>
+            <View className=" items-center gap-1">
+              <Text className={`text-lg font-bold ${historicoColorClass}`}>
+                {porcentajeVsHistorico.toFixed(0)}%
+              </Text>
+              <Text className="text-[10px] text-muted-foreground mb-1">
+                vs. histórico
+              </Text>
+            </View>
           </SectionCard>
         </View>
       </Section>
