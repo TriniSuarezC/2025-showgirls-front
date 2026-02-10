@@ -1,8 +1,14 @@
 import Container from '@/components/Container'
 import Dropdown from '@/components/Dropdown'
 import IconButton from '@/components/IconButton'
+import ProjectionCard from '@/components/ProjectionCard'
 import Section from '@/components/Section'
 import SectionCard from '@/components/SectionCard'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card'
 import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
 import { useAuth } from '@/context/AuthContext'
@@ -178,7 +184,6 @@ const Budget = () => {
     0 / (historicalStats?.historical.length || 1) ||
     0
   {
-    /* Cálculo del porcentaje de comparación */
   }
   const porcentajeVsHistorico =
     ((currentBudget?.projection?.dailyAverageExpense || 0) /
@@ -186,7 +191,6 @@ const Budget = () => {
     100
 
   {
-    /* Color basado en si estás gastando más o menos que tu promedio histórico */
   }
   const historicoColorClass =
     porcentajeVsHistorico > 100 ? 'text-orange-500' : 'text-blue-500'
@@ -292,95 +296,45 @@ const Budget = () => {
         {isCurrentBudget && (
           <>
             <View className="flex-row gap-4 px-1 mt-2">
-              {/* Card: Proyección Final */}
-              <SectionCard
-                className={`flex-1 m-0 p-4 border-2 ${
-                  (currentBudget?.projection?.expenseOverBudget || 0) > 100
-                    ? 'border-red-500'
-                    : (currentBudget?.projection?.expenseOverBudget || 0) > 85
-                      ? 'border-orange-400'
-                      : 'border-green-500'
-                }`}
-              >
-                <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
-                  Proyección al cierre
-                </Text>
-                <Text
-                  className={`text-lg font-bold ${
-                    (currentBudget?.projection?.expenseOverBudget || 0) > 100
-                      ? 'text-red-500'
-                      : 'text-foreground'
-                  }`}
-                >
-                  ${' '}
-                  {currentBudget?.projection?.projectedTotalExpense.toLocaleString(
+              <ProjectionCard
+                title="PROYECCION AL CIERRE"
+                value={
+                  currentBudget?.projection?.projectedTotalExpense.toLocaleString(
                     'es-AR',
-                  )}
-                </Text>
-              </SectionCard>
+                  ) || '$0'
+                }
+                hoverText="Lo que se proyecta gastar al finalizar el período
+                        presupuestario si se mantiene el ritmo de gasto actual.
+                        Un valor superior al monto presupuestado indica que se
+                        proyecta gastar más del presupuesto establecido."
+              ></ProjectionCard>
 
-              {/* Card: Vs. Presupuesto */}
-              <SectionCard
-                className={`flex-1 m-0 p-4 border-2 ${
-                  (currentBudget?.projection?.expenseOverBudget || 0) > 100
-                    ? 'border-red-500'
-                    : (currentBudget?.projection?.expenseOverBudget || 0) > 85
-                      ? 'border-orange-400'
-                      : 'border-green-500'
-                }`}
-              >
-                <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
-                  Vs. Presupuesto
-                </Text>
-                <View className="flex-row items-center gap-1">
-                  <Text
-                    className={`text-lg font-bold ${
-                      (currentBudget?.projection?.expenseOverBudget || 0) > 100
-                        ? 'text-red-500'
-                        : 'text-foreground'
-                    }`}
-                  >
-                    {currentBudget?.projection?.expenseOverBudget}%
-                  </Text>
-                  <Text className="text-xs">
-                    {(currentBudget?.projection?.expenseOverBudget || 0) > 100
-                      ? '🔺'
-                      : '✅'}
-                  </Text>
-                </View>
-              </SectionCard>
+              <ProjectionCard
+                title="VS. PRESUPUESTO"
+                value={
+                  `${currentBudget?.projection?.expenseOverBudget}%` || '0%'
+                }
+                hoverText="Porcentaje del presupuesto que se tendrá si se mantiene
+                        el ritmo de gasto actual. Un valor superior al 100%
+                        indica que se proyecta gastar más del presupuesto
+                        establecido."
+              ></ProjectionCard>
             </View>
 
-            {/* Estadísticas Históricas Secundarias */}
             <View className="flex-row gap-4 px-1 mt-2">
-              <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0 shadow-none">
-                <View className="flex-row items-center gap-1 mb-1">
-                  <History size={12} color="gray" />
-                  <Text className="text-muted-foreground text-[10px] uppercase tracking-wider font-medium">
-                    Promedio Diario
-                  </Text>
-                </View>
-                <Text className="text-lg font-bold text-foreground">
-                  ${' '}
-                  {historicalAvgDaily.toLocaleString('es-AR', {
-                    maximumFractionDigits: 0,
-                  })}
-                </Text>
-              </SectionCard>
+              <ProjectionCard
+                title="PROMEDIO DIARIO"
+                value={historicalAvgDaily.toLocaleString('es-AR', {
+                  maximumFractionDigits: 0,
+                })}
+                hoverText="Promedio diario gastado en presupuestos anteriores. Sirve como referencia para comparar el ritmo de gasto actual."
+              ></ProjectionCard>
 
-              <SectionCard className="flex-1 m-0 p-4 bg-muted/30 border-0 shadow-none">
-                <Text className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-medium">
-                  Ritmo de Gasto
-                </Text>
-                <View className="flex-row items-baseline gap-1">
-                  <Text className={`text-lg font-bold ${historicoColorClass}`}>
-                    {porcentajeVsHistorico.toFixed(0)}%
-                  </Text>
-                  <Text className="text-[10px] text-muted-foreground">
-                    vs. hist.
-                  </Text>
-                </View>
-              </SectionCard>
+              <ProjectionCard
+                title="RITMO DE GASTO"
+                value={`${porcentajeVsHistorico.toFixed(0)}%`}
+                hoverText="Comparación entre el ritmo de gasto actual (gasto diario promedio proyectado) y el ritmo de gasto histórico (promedio diario gastado en presupuestos anteriores). Un valor superior al 100% indica que el ritmo de gasto actual es más alto que el histórico."
+              ></ProjectionCard>
             </View>
           </>
         )}
