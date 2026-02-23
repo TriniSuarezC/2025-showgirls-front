@@ -7,8 +7,8 @@ export interface StreakResponse {
 }
 
 class StreakService {
-  public async findByUserId(userId: string) {
-    return await ApiService.get<StreakResponse>(`/racha/${userId}`)
+  public async findByUserId() {
+    return await ApiService.get<StreakResponse>('/racha')
   }
 }
 
