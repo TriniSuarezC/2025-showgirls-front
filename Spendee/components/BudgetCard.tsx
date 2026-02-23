@@ -7,6 +7,7 @@ import SectionCard from './SectionCard'
 import { Text } from './ui/text'
 import useBudget from '@/hooks/useBudget'
 import { TriangleAlert } from 'lucide-react-native'
+import formatUTCDate from '@/lib/formatUTCdate'
 
 interface BudgetCardProps {
   budget?: BudgetResponse
@@ -35,18 +36,8 @@ export default function BudgetCard({
   const montoRestante = (
     (montoPresupuestado ?? 0) - (montoTotalGastado ?? 0)
   ).toLocaleString('es-AR')
-  const fechaInicio = new Date(budget?.fechaInicio!).toLocaleDateString(
-    'es-ES',
-    new Date(budget?.fechaInicio!).getFullYear() === new Date().getFullYear()
-      ? { day: 'numeric', month: 'short' }
-      : {},
-  )
-  const fechaFin = new Date(budget?.fechaFin!).toLocaleDateString(
-    'es-ES',
-    new Date(budget?.fechaInicio!).getFullYear() === new Date().getFullYear()
-      ? { day: 'numeric', month: 'short' }
-      : {},
-  )
+  const fechaInicio = formatUTCDate(budget?.fechaInicio!)
+  const fechaFin = formatUTCDate(budget?.fechaFin!)
   const diasRestantes =
     new Date(budget.fechaFin) < new Date()
       ? 0
